@@ -1,0 +1,25 @@
+{% extends "tickets/base.html" %}
+{% block content %}
+<h3>{{ ticket.ticket_id }} - {{ ticket.title }}</h3>
+<p>Status: {{ ticket.get_status_display }} | Priority: {{ ticket.get_priority_display }}</p>
+
+<div class="replies">
+  {% for r in replies %}
+    <div class="reply">
+      <b>{{ r.sender.get_full_name|default:r.sender.username }}</b> <small>{{ r.created_at }}</small>
+      <p>{{ r.message|linebreaks }}</p>
+      {% if r.attachment %}
+        <a href="{{ r.attachment.url }}" target="_blank">Attachment</a>
+      {% endif %}
+    </div>
+  {% empty %}
+    <p>No replies yet.</p>
+  {% endfor %}
+</div>
+
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="btn btn-primary">Send Reply</button>
+</form>
+{% endblock %}
